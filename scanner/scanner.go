@@ -81,3 +81,33 @@ func synProbe(host string, port int) bool {
 	}
 	return false
 }
+
+func AggressiveScan(host string, ports []int) {
+	fmt.Printf("Aggressive scanning %s...\n", host)
+	
+	for _, port := range ports {
+		address := fmt.Sprintf("%s:%d", host, port)
+		conn, err := net.DialTimeout("tcp", address, 500*time.Millisecond)
+		
+		if err == nil {
+			service := DetectService(conn, port)
+			banner := grabBanner(conn)
+			fmt.Printf("Port %d: OPEN %s %s\n", port, service, banner)
+			conn.Close()
+		}
+	}
+}
+
+func grabBanner(conn net.Conn) string {
+	conn.SetReadDeadline(time.Now().Add(1 * time.Second))
+	buffer := make([]byte, 1024)
+	n, err := conn.Read(buffer)
+	if err == nil && n > 0 {
+		banner := strings.TrimSpace(string(buffer[:n]))
+		if len(banner) > 50 {
+			banner = banner[:50] + "..."
+		}
+		return fmt.Sprintf("[%s]", banner)
+	}
+	return ""
+}
