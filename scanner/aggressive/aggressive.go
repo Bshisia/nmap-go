@@ -3,16 +3,21 @@ package aggressive
 import (
 	"fmt"
 	"net"
-	"pentest-kit/scanner"
 	"pentest-kit/scanner/service"
 	"time"
 )
+
+type PortResult struct {
+	Port    int
+	Service string
+	Version string
+}
 
 func ScanPorts(host string, ports []int) {
 	fmt.Printf("Starting pentest-kit scan on %s\n", host)
 	fmt.Printf("Host is up.\n")
 	
-	var openPorts []scanner.PortResult
+	var openPorts []PortResult
 	closedCount := 0
 	
 	for _, port := range ports {
@@ -22,7 +27,7 @@ func ScanPorts(host string, ports []int) {
 		if err == nil {
 			serviceName := service.GetServiceName(port)
 			version := service.GetServiceVersion(conn, port)
-			openPorts = append(openPorts, scanner.PortResult{Port: port, Service: serviceName, Version: version})
+			openPorts = append(openPorts, PortResult{Port: port, Service: serviceName, Version: version})
 			conn.Close()
 		} else {
 			closedCount++

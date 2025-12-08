@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"net"
 	"pentest-kit/scanner/aggressive"
 	"pentest-kit/scanner/service"
 	"pentest-kit/scanner/syn"
