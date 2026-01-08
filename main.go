@@ -8,10 +8,32 @@ import (
 )
 
 func main() {
-	var serviceDetection, synScan, aggressive, udpScan, finScan, xmasScan, nullScan, osDetection bool
+	var serviceDetection, synScan, aggressive, udpScan, finScan, xmasScan, nullScan, osDetection, verbose bool
 	var host, portRange string
 
 	switch {
+	case len(os.Args) == 5 && os.Args[1] == "-v":
+		verbose = true
+		switch os.Args[2] {
+		case "-sV":
+			serviceDetection = true
+		case "-sS":
+			synScan = true
+		case "-A":
+			aggressive = true
+		case "-sU":
+			udpScan = true
+		case "-sF":
+			finScan = true
+		case "-sX":
+			xmasScan = true
+		case "-sN":
+			nullScan = true
+		case "-O":
+			osDetection = true
+		}
+		host = os.Args[3]
+		portRange = os.Args[4]
 	case len(os.Args) == 4 && (os.Args[1] == "-sV" || os.Args[1] == "-sS" || os.Args[1] == "-A" || os.Args[1] == "-sU" || os.Args[1] == "-sF" || os.Args[1] == "-sX" || os.Args[1] == "-sN" || os.Args[1] == "-O"):
 		switch os.Args[1] {
 		case "-sV":
@@ -37,12 +59,15 @@ func main() {
 		host = os.Args[1]
 		portRange = os.Args[2]
 	default:
-		fmt.Println("Usage: go run main.go [-sV|-sS|-A|-sU|-sF|-sX|-sN|-O] <host> <port-range>")
+		fmt.Println("Usage: go run main.go [-v] [-sV|-sS|-A|-sU|-sF|-sX|-sN|-O] <host> <port-range>")
 		fmt.Println("Example: go run main.go -A 192.168.1.1 80-443")
 		os.Exit(1)
 	}
 
 	ports := utils.ParsePortRange(portRange)
+	if verbose {
+		fmt.Printf("Starting scan with verbose output...\n")
+	}
 	if aggressive {
 		scanner.AggressiveScan(host, ports)
 	} else if synScan {
