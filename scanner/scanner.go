@@ -4,6 +4,7 @@ import (
 	"net"
 	"pentest-kit/scanner/aggressive"
 	"pentest-kit/scanner/fin"
+	"pentest-kit/scanner/null"
 	"pentest-kit/scanner/service"
 	"pentest-kit/scanner/syn"
 	"pentest-kit/scanner/tcp"
@@ -37,5 +38,9 @@ func FinScan(host string, ports []int) {
 
 func XmasScan(host string, ports []int) {
 	xmas.ScanPorts(host, ports)
+}
+
+func NullScan(host string, ports []int) {
+	null.ScanPorts(host, ports)
 }
 
