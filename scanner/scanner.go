@@ -8,6 +8,7 @@ import (
 	"pentest-kit/scanner/syn"
 	"pentest-kit/scanner/tcp"
 	"pentest-kit/scanner/udp"
+	"pentest-kit/scanner/xmas"
 )
 
 func ScanPorts(host string, ports []int, serviceDetection bool) {
@@ -32,5 +33,9 @@ func UdpScan(host string, ports []int) {
 
 func FinScan(host string, ports []int) {
 	fin.ScanPorts(host, ports)
+}
+
+func XmasScan(host string, ports []int) {
+	xmas.ScanPorts(host, ports)
 }
 
