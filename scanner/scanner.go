@@ -6,6 +6,7 @@ import (
 	"pentest-kit/scanner/service"
 	"pentest-kit/scanner/syn"
 	"pentest-kit/scanner/tcp"
+	"pentest-kit/scanner/udp"
 )
 
 func ScanPorts(host string, ports []int, serviceDetection bool) {
@@ -22,5 +23,9 @@ func SynScan(host string, ports []int) {
 
 func AggressiveScan(host string, ports []int) {
 	aggressive.ScanPorts(host, ports)
+}
+
+func UdpScan(host string, ports []int) {
+	udp.ScanPorts(host, ports)
 }
 

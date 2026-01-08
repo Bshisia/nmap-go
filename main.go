@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	var serviceDetection, synScan, aggressive bool
+	var serviceDetection, synScan, aggressive, udpScan bool
 	var host, portRange string
 
 	switch {
-	case len(os.Args) == 4 && (os.Args[1] == "-sV" || os.Args[1] == "-sS" || os.Args[1] == "-A"):
+	case len(os.Args) == 4 && (os.Args[1] == "-sV" || os.Args[1] == "-sS" || os.Args[1] == "-A" || os.Args[1] == "-sU"):
 		switch os.Args[1] {
 		case "-sV":
 			serviceDetection = true
@@ -20,6 +20,8 @@ func main() {
 			synScan = true
 		case "-A":
 			aggressive = true
+		case "-sU":
+			udpScan = true
 		}
 		host = os.Args[2]
 		portRange = os.Args[3]
@@ -27,7 +29,7 @@ func main() {
 		host = os.Args[1]
 		portRange = os.Args[2]
 	default:
-		fmt.Println("Usage: go run main.go [-sV|-sS|-A] <host> <port-range>")
+		fmt.Println("Usage: go run main.go [-sV|-sS|-A|-sU] <host> <port-range>")
 		fmt.Println("Example: go run main.go -A 192.168.1.1 80-443")
 		os.Exit(1)
 	}
@@ -37,6 +39,8 @@ func main() {
 		scanner.AggressiveScan(host, ports)
 	} else if synScan {
 		scanner.SynScan(host, ports)
+	} else if udpScan {
+		scanner.UdpScan(host, ports)
 	} else {
 		scanner.ScanPorts(host, ports, serviceDetection)
 	}
