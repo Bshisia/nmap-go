@@ -3,6 +3,7 @@ package scanner
 import (
 	"net"
 	"pentest-kit/scanner/aggressive"
+	"pentest-kit/scanner/fin"
 	"pentest-kit/scanner/service"
 	"pentest-kit/scanner/syn"
 	"pentest-kit/scanner/tcp"
@@ -27,5 +28,9 @@ func AggressiveScan(host string, ports []int) {
 
 func UdpScan(host string, ports []int) {
 	udp.ScanPorts(host, ports)
+}
+
+func FinScan(host string, ports []int) {
+	fin.ScanPorts(host, ports)
 }
 
