@@ -5,6 +5,7 @@ import (
 	"pentest-kit/scanner/aggressive"
 	"pentest-kit/scanner/fin"
 	"pentest-kit/scanner/null"
+	"pentest-kit/scanner/os"
 	"pentest-kit/scanner/service"
 	"pentest-kit/scanner/syn"
 	"pentest-kit/scanner/tcp"
@@ -42,5 +43,9 @@ func XmasScan(host string, ports []int) {
 
 func NullScan(host string, ports []int) {
 	null.ScanPorts(host, ports)
+}
+
+func OSDetection(host string, ports []int) {
+	os.DetectOS(host, ports)
 }
 
