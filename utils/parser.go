@@ -6,6 +6,15 @@ import (
 )
 
 func ParsePortRange(portRange string) []int {
+	if portRange == "-" {
+		// Scan all ports 1-65535
+		var ports []int
+		for i := 1; i <= 65535; i++ {
+			ports = append(ports, i)
+		}
+		return ports
+	}
+	
 	var ports []int
 	
 	if strings.Contains(portRange, "-") {

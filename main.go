@@ -104,8 +104,9 @@ func main() {
 		host = os.Args[1]
 		portRange = os.Args[2]
 	default:
-		fmt.Println("Usage: go run main.go [-v] [-sV|-sS|-A|-sU|-sF|-sX|-sN|-O] <host> [-T0-T5] <port-range>")
+		fmt.Println("Usage: go run main.go [-v] [-sV|-sS|-A|-sU|-sF|-sX|-sN|-O] <host> [-T0-T5] <port-range|->")
 		fmt.Println("Example: go run main.go -A 192.168.1.1 80-443")
+		fmt.Println("Example: go run main.go -sS 192.168.1.1 - (scan all ports)")
 		os.Exit(1)
 	}
 
