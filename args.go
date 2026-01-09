@@ -44,6 +44,10 @@ func ParseArgs() *Config {
 		setScanType(config, os.Args[1])
 		config.Host = os.Args[2]
 		config.PortRange = os.Args[3]
+	case len(os.Args) == 3 && isScanFlag(os.Args[1]):
+		setScanType(config, os.Args[1])
+		config.Host = os.Args[2]
+		config.PortRange = "1-1000" // Default port range
 	case len(os.Args) == 3:
 		config.Host = os.Args[1]
 		config.PortRange = os.Args[2]
@@ -81,7 +85,8 @@ func isScanFlag(flag string) bool {
 }
 
 func showUsage() {
-	fmt.Println("Usage: go run main.go [-v] [-sV|-sS|-A|-sU|-sF|-sX|-sN|-O] <host> [-T0-T5] <port-range|->")
+	fmt.Println("Usage: go run main.go [-v] [-sV|-sS|-A|-sU|-sF|-sX|-sN|-O] <host> [port-range|-]")
+	fmt.Println("Example: go run main.go -A 192.168.1.1")
 	fmt.Println("Example: go run main.go -A 192.168.1.1 80-443")
 	fmt.Println("Example: go run main.go -sS 192.168.1.1 - (scan all ports)")
 	os.Exit(1)
