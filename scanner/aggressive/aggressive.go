@@ -14,7 +14,7 @@ type PortResult struct {
 }
 
 func ScanPorts(host string, ports []int) {
-	fmt.Printf("Starting Nmap 7.95 ( https://nmap.org ) at %s\n", time.Now().Format("2006-01-02 15:04 MST"))
+	fmt.Printf("Starting Pentest-Kit at %s\n", time.Now().Format("2006-01-02 15:04 MST"))
 	
 	addrs, err := net.LookupIP(host)
 	var ip string
@@ -24,7 +24,7 @@ func ScanPorts(host string, ports []int) {
 		ip = addrs[0].String()
 	}
 	
-	fmt.Printf("Nmap scan report for %s (%s)\n", host, ip)
+	fmt.Printf("Pentest-Kit scan report for %s (%s)\n", host, ip)
 	fmt.Printf("Host is up (0.0000050s latency).\n")
 	
 	var openPorts []PortResult
@@ -53,5 +53,5 @@ func ScanPorts(host string, ports []int) {
 		fmt.Printf("Not shown: %d closed tcp ports (reset)\n", closed)
 	}
 	
-	fmt.Printf("\nNmap done: 1 IP address (1 host up) scanned in 0.14 seconds\n")
+	fmt.Printf("\nPentest-Kit scan done: 1 IP address (1 host up) scanned in 0.14 seconds\n")
 }
