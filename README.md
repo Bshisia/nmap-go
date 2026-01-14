@@ -1,106 +1,136 @@
 # pentest-kit
 
-A lightweight, nmap-like port scanner written in Go for penetration testing and network reconnaissance.
+A comprehensive penetration testing toolkit written in Go for security assessments and network reconnaissance.
 
 ## Features
 
+- **TinyScanner**: Fast port scanning tool
+- **DirFinder**: Directory brute-forcing for web applications
+- **HostMapper**: Network mapping and host discovery
+- **HeaderGrabber**: HTTP header analysis and security assessment
 - **Multiple Scan Types**: SYN, FIN, XMAS, NULL, UDP, Aggressive, Service Detection, OS Detection
-- **Nmap-Compatible Output**: Familiar output format matching nmap
-- **Fast & Efficient**: Optimized scanning with configurable timeouts
-- **Service Detection**: Identifies common services running on open ports
-- **OS Fingerprinting**: TCP-based operating system detection
-- **Flexible Port Ranges**: Scan specific ports, ranges, or all ports
+- **Nmap-Compatible Output**: Familiar output format
+- **File Output**: Save results to files for reporting
 
 ## Installation
 
 ```bash
 git clone https://learn.zone01kisumu.ke/git/bshisia/pentest-kit.git
 cd pentest-kit
-go build
+go build -o pentestkit
 ```
 
 ## Usage
 
-### Basic Scan (Default TCP Connect)
+### Help Command
+
 ```bash
-go run . <host>
-go run . 192.168.1.1
+pentestkit --help
 ```
 
-### Scan Types
+### TinyScanner (Port Scanning)
 
-**SYN Scan (Stealth)**
+Scan specific ports on a target host:
+
 ```bash
-sudo go run . -sS <host> [port-range]
-sudo go run . -sS 192.168.1.1
+pentestkit -t 192.168.1.1 -p 22,80,443 -o result1.txt
 ```
 
-**FIN Scan**
-```bash
-sudo go run . -sF <host> [port-range]
-sudo go run . -sF 192.168.1.1 1-1000
+**Options:**
+- `-t`: Target host IP address
+- `-p`: Comma-separated list of ports to scan
+- `-o`: Output file (optional)
+
+**Example Output:**
+```
+Port 22: OPEN
+Port 80: OPEN
+Port 443: CLOSED
 ```
 
-**XMAS Scan**
+### DirFinder (Directory Brute-forcing)
+
+Discover hidden directories on web servers:
+
 ```bash
-sudo go run . -sX <host> [port-range]
-sudo go run . -sX 192.168.1.1
+pentestkit -d http://example.com -w /path/to/wordlist.txt -o result2.txt
 ```
 
-**NULL Scan**
-```bash
-sudo go run . -sN <host> [port-range]
-sudo go run . -sN 192.168.1.1
+**Options:**
+- `-d`: Target URL
+- `-w`: Path to wordlist file
+- `-o`: Output file (optional)
+
+**Example Output:**
+```
+http://example.com/admin - Status: 200
+http://example.com/login - Status: 200
+http://example.com/api - Status: 404
 ```
 
-**UDP Scan**
+### HostMapper (Network Mapping)
+
+Discover live hosts on a subnet:
+
 ```bash
-sudo go run . -sU <host> [port-range]
-sudo go run . -sU 192.168.1.1 53
+pentestkit -h 192.168.1.0/24 -o result3.txt
 ```
 
-**Aggressive Scan (Service + OS Detection)**
-```bash
-go run . -A <host> [port-range]
-go run . -A 192.168.1.1 1-1000
+**Options:**
+- `-h`: Subnet in CIDR notation
+- `-o`: Output file (optional)
+
+**Example Output:**
+```
+192.168.1.1 - ALIVE
+192.168.1.100 - ALIVE
+192.168.1.222 - ALIVE
 ```
 
-**Service Version Detection**
+### HeaderGrabber (HTTP Header Analysis)
+
+Analyze HTTP headers and security configurations:
+
 ```bash
-go run . -sV <host> [port-range]
-go run . -sV 192.168.1.1 80-443
+pentestkit -g http://example.com -o result4.txt
 ```
 
-**OS Detection**
-```bash
-go run . -O <host> [port-range]
-go run . -O 192.168.1.1
+**Options:**
+- `-g`: Target URL
+- `-o`: Output file (optional)
+
+**Example Output:**
+```
+Status Code: 200 OK
+
+Headers:
+Server: nginx
+Content-Type: text/html
+
+Security Analysis:
+[+] X-Frame-Options: DENY (Protects against clickjacking)
+[-] X-Content-Type-Options: MISSING (Prevents MIME type sniffing)
 ```
 
-### Port Range Options
+### Legacy Nmap-style Scanning
 
-- **Single port**: `80`
-- **Port range**: `1-1000`
-- **All ports**: `-` (scans 1-65535)
-- **Default**: `1-1000` (when no range specified)
-
-### Examples
+The tool also supports nmap-style command syntax:
 
 ```bash
-# Scan common ports on target
-go run . 192.168.1.100
+# Basic scan
+pentestkit 192.168.1.1
 
-# FIN scan on specific port range
-sudo go run . -sF 192.168.1.100 20-80
+# SYN scan
+sudo pentestkit -sS 192.168.1.1 1-1000
 
-# Aggressive scan with service detection
-go run . -A 192.168.1.100
+# FIN scan
+sudo pentestkit -sF 192.168.1.1
 
-# Scan all ports with SYN scan
-sudo go run . -sS 192.168.1.100 -
+# Aggressive scan
+pentestkit -A 192.168.1.1
 
-# OS detection on default ports
-go run . -O 192.168.1.100
+# OS detection
+pentestkit -O 192.168.1.1
 ```
 
 ## Scan Types Explained
@@ -123,49 +153,65 @@ go run . -O 192.168.1.100
 ### XMAS Scan (-sX)
 - Sends packets with FIN+PSH+URG flags
 - Useful for firewall evasion
-- Named for "lit up" TCP flags
 
 ### NULL Scan (-sN)
 - Sends packets with no flags set
 - Ultra-stealthy technique
-- Relies on RFC compliance
 
 ### UDP Scan (-sU)
 - Scans UDP ports
-- Slower than TCP scans
 - Important for DNS, DHCP, SNMP services
 
 ### Aggressive Scan (-A)
 - Combines service detection and OS fingerprinting
 - Most comprehensive scan
-- Provides detailed service information
 
 ### OS Detection (-O)
 - TCP fingerprinting based on TTL and window size
-- Analyzes port patterns
 - Identifies target operating system
-
-## Output Format
-
-The tool produces nmap-compatible output:
-
-```
-Starting Nmap 7.94SVN ( https://nmap.org ) at 2026-01-14 10:13 EAT
-Nmap scan report for 192.168.1.222
-Host is up (0.00018s latency).
-Not shown: 998 closed tcp ports (conn-refused)
-PORT   STATE SERVICE
-22/tcp open  ssh
-80/tcp open  http
-
-Pentest-Kit done: 1 IP address (1 host up) scanned in 0.06 seconds
-```
 
 ## Requirements
 
 - Go 1.16 or higher
 - Root/sudo privileges for raw socket scans (SYN, FIN, XMAS, NULL)
 - Network access to target hosts
+- Wordlist file for directory brute-forcing (sample included)
+
+## Configuration Files
+
+- `wordlist.txt`: Sample wordlist for directory brute-forcing
+- Customize with your own wordlists for better results
+
+## Output Files
+
+All tools support the `-o` flag to save results:
+- Results are saved in plain text format
+- Easy to parse and include in reports
+- Timestamped for audit trails
+
+## Ethical and Legal Use
+
+⚠️ **IMPORTANT - READ CAREFULLY**
+
+This tool is designed for **authorized security testing only**. You must:
+
+1. **Obtain Written Permission**: Always get explicit authorization before scanning any network or system
+2. **Respect Scope**: Only test systems within the agreed scope
+3. **Follow Laws**: Unauthorized port scanning and penetration testing may be illegal in your jurisdiction
+4. **Professional Use**: Use this tool responsibly as part of legitimate security assessments
+5. **No Malicious Intent**: Never use these tools for unauthorized access or malicious purposes
+
+**Legal Consequences**: Unauthorized use of penetration testing tools can result in:
+- Criminal prosecution
+- Civil lawsuits
+- Fines and penalties
+- Imprisonment
+
+**Best Practices**:
+- Always work within a defined scope of work
+- Document all testing activities
+- Report findings responsibly
+- Respect privacy and data protection laws
 
 ## Limitations
 
@@ -173,19 +219,48 @@ Pentest-Kit done: 1 IP address (1 host up) scanned in 0.06 seconds
 - Raw socket implementation may vary by OS
 - Some firewalls may block or detect scans
 - UDP scans are slower due to protocol nature
+- Directory brute-forcing depends on wordlist quality
+- Network mapping may be slow on large subnets
 
-## Legal Notice
+## Troubleshooting
 
-⚠️ **WARNING**: This tool is for educational and authorized testing purposes only. Unauthorized port scanning may be illegal in your jurisdiction. Always obtain proper authorization before scanning networks you don't own.
+**Permission Denied Errors**:
+```bash
+sudo pentestkit -sS 192.168.1.1
+```
+
+**Timeout Issues**:
+- Increase timeout values in source code
+- Check network connectivity
+- Verify firewall rules
+
+**Wordlist Not Found**:
+```bash
+pentestkit -d http://example.com -w ./wordlist.txt -o results.txt
+```
+
+## Contributing
+
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
+4. Follow Go coding standards
 
 ## License
 
 MIT License - See LICENSE file for details
 
-## Contributing
+## Disclaimer
 
-Contributions are welcome! Please feel free to submit pull requests or open issues.
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. THE AUTHORS ARE NOT RESPONSIBLE FOR ANY MISUSE OR DAMAGE CAUSED BY THIS TOOL. USE AT YOUR OWN RISK.
 
 ## Author
 
-Developed for penetration testing and network security assessment.
+Developed for educational purposes and authorized penetration testing engagements.
+
+## Acknowledgments
+
+- Inspired by nmap and other industry-standard security tools
+- Built with Go for performance and portability
+- Community contributions welcome
