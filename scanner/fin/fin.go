@@ -7,7 +7,7 @@ import (
 )
 
 func ScanPorts(host string, ports []int) {
-	fmt.Printf("Starting Nmap 7.94SVN ( https://nmap.org ) at %s\n", time.Now().Format("2006-01-02 15:04 MST"))
+	fmt.Printf("Starting Pentest-Kit at %s\n", time.Now().Format("2006-01-02 15:04 MST"))
 	
 	addrs, err := net.LookupIP(host)
 	var ip string
@@ -17,7 +17,7 @@ func ScanPorts(host string, ports []int) {
 		ip = addrs[0].String()
 	}
 	
-	fmt.Printf("Nmap scan report for %s (%s)\n", host, ip)
+	fmt.Printf("Pentest-Kit scan report for %s (%s)\n", host, ip)
 	fmt.Printf("Host is up (0.00020s latency).\n")
 	
 	closed := 0
@@ -45,7 +45,7 @@ func ScanPorts(host string, ports []int) {
 		}
 	}
 	
-	fmt.Printf("\nNmap done: 1 IP address (1 host up) scanned in 1.32 seconds\n")
+	fmt.Printf("\nPentest-Kit scan done: 1 IP address (1 host up) scanned in 1.32 seconds\n")
 }
 
 func getServiceName(port int) string {
