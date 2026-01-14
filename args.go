@@ -47,10 +47,14 @@ func ParseArgs() *Config {
 	case len(os.Args) == 3 && isScanFlag(os.Args[1]):
 		setScanType(config, os.Args[1])
 		config.Host = os.Args[2]
-		config.PortRange = "1-1000" // Default port range
+		config.PortRange = "1-1000"
 	case len(os.Args) == 3:
 		config.Host = os.Args[1]
 		config.PortRange = os.Args[2]
+	case len(os.Args) == 2:
+		// Default scan without flags (like nmap)
+		config.Host = os.Args[1]
+		config.PortRange = "1-1000"
 	default:
 		showUsage()
 	}
