@@ -158,7 +158,7 @@ PORT   STATE SERVICE
 22/tcp open  ssh
 80/tcp open  http
 
-Nmap done: 1 IP address (1 host up) scanned in 0.06 seconds
+Pentest-Kit done: 1 IP address (1 host up) scanned in 0.06 seconds
 ```
 
 ## Requirements
