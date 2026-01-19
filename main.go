@@ -10,6 +10,40 @@ import (
 )
 
 func main() {
+	// Check for legacy nmap-style flags first
+	if len(os.Args) > 1 && isLegacyFlag(os.Args[1]) {
+		// Use legacy parsing
+		config := ParseArgs()
+		ports := utils.ParsePortRange(config.PortRange)
+
+		if config.Verbose {
+			fmt.Printf("Starting scan with verbose output...\n")
+		}
+		if config.Timing != "" {
+			fmt.Printf("Using timing template: %s\n", config.Timing)
+		}
+
+		switch {
+		case config.Aggressive:
+			scanner.AggressiveScan(config.Host, ports)
+		case config.SynScan:
+			scanner.SynScan(config.Host, ports)
+		case config.UdpScan:
+			scanner.UdpScan(config.Host, ports)
+		case config.FinScan:
+			scanner.FinScan(config.Host, ports)
+		case config.XmasScan:
+			scanner.XmasScan(config.Host, ports)
+		case config.NullScan:
+			scanner.NullScan(config.Host, ports)
+		case config.OSDetection:
+			scanner.OSDetection(config.Host, ports)
+		default:
+			scanner.ScanPorts(config.Host, ports, config.ServiceDetection)
+		}
+		return
+	}
+
 	// Define flags for new tools
 	target := flag.String("t", "", "Target host for port scanning")
 	portsFlag := flag.String("p", "", "Ports to scan (comma-separated, e.g., 22,80,443)")
@@ -52,35 +86,13 @@ func main() {
 		return
 	}
 	
-	// Legacy nmap-style scanning
-	config := ParseArgs()
-	ports := utils.ParsePortRange(config.PortRange)
+	// If no flags matched, show help
+	showHelp()
+}
 
-	if config.Verbose {
-		fmt.Printf("Starting scan with verbose output...\n")
-	}
-	if config.Timing != "" {
-		fmt.Printf("Using timing template: %s\n", config.Timing)
-	}
-
-	switch {
-	case config.Aggressive:
-		scanner.AggressiveScan(config.Host, ports)
-	case config.SynScan:
-		scanner.SynScan(config.Host, ports)
-	case config.UdpScan:
-		scanner.UdpScan(config.Host, ports)
-	case config.FinScan:
-		scanner.FinScan(config.Host, ports)
-	case config.XmasScan:
-		scanner.XmasScan(config.Host, ports)
-	case config.NullScan:
-		scanner.NullScan(config.Host, ports)
-	case config.OSDetection:
-		scanner.OSDetection(config.Host, ports)
-	default:
-		scanner.ScanPorts(config.Host, ports, config.ServiceDetection)
-	}
+func isLegacyFlag(arg string) bool {
+	return arg == "-sS" || arg == "-sF" || arg == "-sX" || arg == "-sN" || 
+		   arg == "-sU" || arg == "-A" || arg == "-sV" || arg == "-O" || arg == "-v"
 }
 
 func showHelp() {
