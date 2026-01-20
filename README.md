@@ -25,6 +25,8 @@ go build -o pentestkit
 ### Help Command
 
 ```bash
+go run . --help
+# or
 pentestkit --help
 ```
 
@@ -33,12 +35,19 @@ pentestkit --help
 Scan specific ports on a target host:
 
 ```bash
-pentestkit -t 192.168.1.1 -p 22,80,443 -o result1.txt
+# Basic port scan
+go run . -t 192.168.1.1 -p 22,80,443
+
+# Port scan with output file
+go run . -t 192.168.1.1 -p 22,80,443 -o result1.txt
+
+# Scan multiple ports
+go run . -t 127.0.0.1 -p 21,22,23,25,53,80,110,143,443,993,995
 ```
 
 **Options:**
-- `-t`: Target host IP address
-- `-p`: Comma-separated list of ports to scan
+- `-t`: Target host IP address (required)
+- `-p`: Comma-separated list of ports to scan (required)
 - `-o`: Output file (optional)
 
 **Example Output:**
@@ -53,19 +62,26 @@ Port 443: CLOSED
 Discover hidden directories on web servers:
 
 ```bash
-pentestkit -d http://example.com -w /path/to/wordlist.txt -o result2.txt
+# Basic directory brute-force
+go run . -d https://example.com -w wordlist.txt
+
+# Directory brute-force with output file
+go run . -d https://example.com -w wordlist.txt -o result2.txt
+
+# Scan specific website
+go run . -d https://learn.zone01kisumu.ke -w wordlist.txt -o result2.txt
 ```
 
 **Options:**
-- `-d`: Target URL
-- `-w`: Path to wordlist file
+- `-d`: Target URL (must include http:// or https://) (required)
+- `-w`: Path to wordlist file (required)
 - `-o`: Output file (optional)
 
 **Example Output:**
 ```
-http://example.com/admin - Status: 200
-http://example.com/login - Status: 200
-http://example.com/api - Status: 404
+https://example.com/admin - Status: 200
+https://example.com/login - Status: 404
+https://example.com/robots.txt - Status: 200
 ```
 
 ### HostMapper (Network Mapping)
@@ -73,11 +89,18 @@ http://example.com/api - Status: 404
 Discover live hosts on a subnet:
 
 ```bash
-pentestkit -h 192.168.1.0/24 -o result3.txt
+# Basic network mapping
+go run . -h 192.168.1.0/24
+
+# Network mapping with output file
+go run . -h 192.168.1.0/24 -o result3.txt
+
+# Scan different subnet
+go run . -h 10.0.0.0/24 -o network_scan.txt
 ```
 
 **Options:**
-- `-h`: Subnet in CIDR notation
+- `-h`: Subnet in CIDR notation (e.g., 192.168.1.0/24) (required)
 - `-o`: Output file (optional)
 
 **Example Output:**
@@ -92,11 +115,18 @@ pentestkit -h 192.168.1.0/24 -o result3.txt
 Analyze HTTP headers and security configurations:
 
 ```bash
-pentestkit -g http://example.com -o result4.txt
+# Basic header analysis
+go run . -g https://example.com
+
+# Header analysis with output file
+go run . -g https://example.com -o result4.txt
+
+# Analyze specific website
+go run . -g https://www.passafrika.xyz -o headers.txt
 ```
 
 **Options:**
-- `-g`: Target URL
+- `-g`: Target URL (must include http:// or https://) (required)
 - `-o`: Output file (optional)
 
 **Example Output:**
@@ -117,23 +147,100 @@ Security Analysis:
 The tool also supports nmap-style command syntax:
 
 ```bash
-# Basic scan
-pentestkit 192.168.1.1
+# Basic TCP connect scan (default)
+go run . 192.168.1.1
+go run . localhost
 
-# SYN scan
-sudo pentestkit -sS 192.168.1.1 1-1000
+# SYN scan (requires root)
+sudo go run . -sS 192.168.1.1
+sudo go run . -sS 192.168.1.1 1-1000
 
-# FIN scan
-sudo pentestkit -sF 192.168.1.1
+# FIN scan (requires root)
+sudo go run . -sF 192.168.1.1
+sudo go run . -sF localhost
 
-# Aggressive scan
-pentestkit -A 192.168.1.1
+# XMAS scan (requires root)
+sudo go run . -sX 192.168.1.1
+
+# NULL scan (requires root)
+sudo go run . -sN 192.168.1.1
+
+# UDP scan
+go run . -sU 192.168.1.1
+go run . -sU 192.168.1.1 53,67,68,123
+
+# Aggressive scan (service + OS detection)
+go run . -A 192.168.1.1
+go run . -A localhost
+
+# Service version detection
+go run . -sV 192.168.1.1
+go run . -sV 192.168.1.1 80-443
 
 # OS detection
-pentestkit -O 192.168.1.1
+go run . -O 192.168.1.1
+go run . -O localhost
+
+# Verbose output
+go run . -v -sS 192.168.1.1
+
+# Custom port ranges
+go run . -sS 192.168.1.1 1-65535    # All ports
+go run . -sS 192.168.1.1 80-443     # Port range
+go run . -sS 192.168.1.1 -          # All ports (alternative)
 ```
 
-## Scan Types Explained
+## Quick Reference
+
+### All Available Commands
+
+```bash
+# Help
+go run . --help
+
+# TinyScanner (Port Scanning)
+go run . -t <target> -p <ports> [-o output.txt]
+go run . -t 192.168.1.1 -p 22,80,443 -o result1.txt
+
+# DirFinder (Directory Brute-forcing)
+go run . -d <url> -w <wordlist> [-o output.txt]
+go run . -d https://example.com -w wordlist.txt -o result2.txt
+
+# HostMapper (Network Mapping)
+go run . -h <subnet> [-o output.txt]
+go run . -h 192.168.1.0/24 -o result3.txt
+
+# HeaderGrabber (HTTP Header Analysis)
+go run . -g <url> [-o output.txt]
+go run . -g https://example.com -o result4.txt
+
+# Legacy Nmap-style Scanning
+go run . [-sS|-sF|-sX|-sN|-sU|-A|-sV|-O] <host> [port-range]
+go run . -sS 192.168.1.1 1-1000
+go run . -A localhost
+go run . 192.168.1.1  # Basic scan
+```
+
+### Common Usage Patterns
+
+```bash
+# Quick port scan
+go run . -t 192.168.1.1 -p 22,80,443
+
+# Full network discovery
+go run . -h 192.168.1.0/24 -o network.txt
+
+# Website security assessment
+go run . -g https://example.com -o headers.txt
+go run . -d https://example.com -w wordlist.txt -o dirs.txt
+
+# Comprehensive host scan
+go run . -A 192.168.1.100 -o full_scan.txt
+
+# Stealth scanning (requires root)
+sudo go run . -sF 192.168.1.1
+sudo go run . -sX 192.168.1.1
+```
 
 ### TCP Connect Scan (Default)
 - Completes full TCP handshake
